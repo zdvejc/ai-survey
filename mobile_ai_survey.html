@@ -1,211 +1,28 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-  <title>手机端 — AI 模型使用率调查问卷</title>
-  <style>
-    :root{--accent:#4f46e5;--bg:#f7f7fb;--card:#ffffff}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;background:var(--bg);color:#0f172a}
-    .wrap{max-width:780px;margin:18px auto;padding:16px}
-    .card{background:var(--card);border-radius:14px;box-shadow:0 6px 20px rgba(12,18,31,0.06);padding:18px}
-    header{display:flex;gap:12px;align-items:center}
-    header h1{font-size:18px;margin:0}
-    p.lead{margin:8px 0 16px;color:#475569;font-size:14px}
-    form .row{margin-bottom:14px}
-    label{display:block;font-weight:600;margin-bottom:6px;font-size:13px}
-    .muted{font-weight:400;color:#64748b;font-size:13px}
-    .chips{display:flex;flex-wrap:wrap;gap:8px}
-    .chip{padding:8px 10px;border-radius:999px;border:1px solid #e6e9f2;background:#fff;font-size:13px}
-    input[type=text],select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6e9f2;background:#fbfdff}
-    textarea{min-height:90px}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .full{grid-column:1/-1}
-    .btn{display:inline-block;background:var(--accent);color:#fff;padding:10px 14px;border-radius:10px;border:none;font-weight:700}
-    .small{font-size:13px;padding:8px 10px}
-    .switch{display:flex;gap:8px;align-items:center}
-    .footer{margin-top:12px;font-size:13px;color:#475569}
-    .result{margin-top:12px;padding:12px;border-radius:10px;background:#f1f5f9}
-    @media (max-width:520px){.grid{grid-template-columns:1fr}.wrap{margin:8px}}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>贪吃蛇游戏</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <header>
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect width="24" height="24" rx="6" fill="#eef2ff"/><path d="M7 12h10M7 8h10M7 16h6" stroke="#4f46e5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <div>
-          <h1>AI 模型使用率调查（手机端优化）</h1>
-          <p class="muted">仅需 1–2 分钟，收集设备、使用频率与用途信息（匿名）</p>
+    <div class="game-container">
+        <h1 class="game-title">贪吃蛇游戏</h1>
+        <div class="game-info">
+            <div class="score">分数: <span id="score">0</span></div>
+            <div class="high-score">最高分: <span id="highScore">0</span></div>
         </div>
-      </header>
-
-      <p class="lead">请在下列项中选择您正在使用或曾使用过的 AI 模型，及相关使用习惯。</p>
-
-      <form id="survey">
-        <div class="row">
-          <label>1) 您的设备类型（可多选） <span class="muted">（可选）</span></label>
-          <div class="chips" id="deviceChips">
-            <label class="chip"><input type="checkbox" name="device" value="手机"> 手机</label>
-            <label class="chip"><input type="checkbox" name="device" value="平板"> 平板</label>
-            <label class="chip"><input type="checkbox" name="device" value="笔记本"> 笔记本</label>
-            <label class="chip"><input type="checkbox" name="device" value="台式机"> 台式机</label>
-          </div>
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <div class="game-controls">
+            <button id="startBtn">开始游戏</button>
+            <button id="pauseBtn" disabled>暂停</button>
+            <button id="restartBtn" disabled>重新开始</button>
         </div>
-
-        <div class="row">
-          <label>2) 您使用过或正在使用的 AI 模型（多选）</label>
-          <div class="chips" id="modelChips">
-            <label class="chip"><input type="checkbox" name="model" value="ChatGPT"> ChatGPT / GPT</label>
-            <label class="chip"><input type="checkbox" name="model" value="Claude"> Claude</label>
-            <label class="chip"><input type="checkbox" name="model" value="Gemini"> Gemini</label>
-            <label class="chip"><input type="checkbox" name="model" value="Llama"> LLaMA / Vicuna 等开源模型</label>
-            <label class="chip"><input type="checkbox" name="model" value="LocalOnDevice"> 本地手机端模型（例如 iOS/Android 本地推理）</label>
-            <label class="chip"><input type="checkbox" name="model" value="Other"> 其他（在备注中填写）</label>
-          </div>
+        <div class="game-instructions">
+            <p>使用方向键控制蛇的移动，空格键暂停/继续游戏</p>
         </div>
-
-        <div class="row grid">
-          <div>
-            <label>3) 使用频率</label>
-            <select name="frequency">
-              <option value="daily">每天 多次</option>
-              <option value="daily_once">每天 一次</option>
-              <option value="weekly">每周 几次</option>
-              <option value="monthly">每月 几次</option>
-              <option value="rare">很少 / 偶尔</option>
-              <option value="never">从不</option>
-            </select>
-          </div>
-
-          <div>
-            <label>4) 使用主要场景（可多选）</label>
-            <select name="mainUse" multiple size="4">
-              <option value="chat">聊天 / 问答</option>
-              <option value="coding">编程 / 代码辅助</option>
-              <option value="writing">写作 / 文案</option>
-              <option value="image">图像生成 / 编辑</option>
-              <option value="search">信息检索 / 摘要</option>
-              <option value="education">学习 / 教育</option>
-              <option value="other">其他</option>
-            </select>
-          </div>
-
-          <div class="full">
-            <label>5) 满意度（1-5，1 最不满意）</label>
-            <div class="chips">
-              <label class="chip"><input type="radio" name="satisfaction" value="1"> 1</label>
-              <label class="chip"><input type="radio" name="satisfaction" value="2"> 2</label>
-              <label class="chip"><input type="radio" name="satisfaction" value="3" checked> 3</label>
-              <label class="chip"><input type="radio" name="satisfaction" value="4"> 4</label>
-              <label class="chip"><input type="radio" name="satisfaction" value="5"> 5</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <label>6) 您愿意公开哪些信息？</label>
-          <div class="chips">
-            <label class="chip"><input type="checkbox" name="share" value="anon"> 匿名分享使用统计（不包含设备 ID）</label>
-            <label class="chip"><input type="checkbox" name="share" value="email"> 提供邮箱以便后续联系</label>
-          </div>
-        </div>
-
-        <div class="row">
-          <label>7) 备注（若选择 "其他" 或想补充）</label>
-          <textarea name="note" placeholder="例如：我主要用模型来做...，或写下您用过但上面没有列出的模型"></textarea>
-        </div>
-
-        <div class="row">
-          <button class="btn" type="submit">提交问卷</button>
-          <button type="button" id="saveLocal" class="btn small" style="background:#0f172a;margin-left:8px">保存到本机</button>
-        </div>
-
-        <div id="status" class="result" style="display:none"></div>
-      </form>
-
-      <p class="footer">说明：此问卷可嵌入任意网站，建议配套服务器或第三方表单服务（Formspree / Netlify Forms / Google Forms）以便集中收集。</p>
     </div>
-  </div>
-
-  <script>
-    const form = document.getElementById('survey');
-    const status = document.getElementById('status');
-    const saveBtn = document.getElementById('saveLocal');
-
-    function gatherForm() {
-      const fd = new FormData(form);
-      const obj = {};
-      for (const [k,v] of fd.entries()){
-        if (obj[k]){
-          if (!Array.isArray(obj[k])) obj[k] = [obj[k]];
-          obj[k].push(v);
-        } else {
-          obj[k] = v;
-        }
-      }
-      // handle multi-select manually
-      const mainUse = Array.from(form.querySelector('select[name=mainUse]').selectedOptions).map(o=>o.value);
-      if (mainUse.length) obj.mainUse = mainUse;
-      // collect all checked model and devices
-      obj.model = Array.from(form.querySelectorAll('input[name=model]:checked')).map(i=>i.value);
-      obj.device = Array.from(form.querySelectorAll('input[name=device]:checked')).map(i=>i.value);
-      obj.share = Array.from(form.querySelectorAll('input[name=share]:checked')).map(i=>i.value);
-      return obj;
-    }
-
-    form.addEventListener('submit', async (e)=>{
-      e.preventDefault();
-      const payload = gatherForm();
-      // default demo: 保存到 localStorage 并显示。替换下面的 fetch URL 为你的后端或 Formspree/Netlify 等。
-      try{
-        localStorage.setItem('lastSurvey', JSON.stringify(payload));
-        status.style.display = 'block';
-        status.innerHTML = '<strong>提交成功（本地保存示例）</strong><div style="margin-top:8px">数据预览：<pre style="white-space:pre-wrap">'+JSON.stringify(payload,null,2)+'</pre></div>';
-        // 如果你有后端 API，可以用下面的示范代码将数据 POST 到服务器（取消注释并填写 URL）
-        /*
-        const resp = await fetch('https://your-api.example.com/submit',{
-          method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)
-        });
-        const r = await resp.json();
-        */
-      }catch(err){
-        status.style.display = 'block';
-        status.textContent = '提交失败：' + err.message;
-      }
-    });
-
-    saveBtn.addEventListener('click', ()=>{
-      const payload = gatherForm();
-      const filename = 'ai-survey-'+(new Date()).toISOString().slice(0,19).replace(/:/g,'-')+'.json';
-      const blob = new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
-      URL.revokeObjectURL(url);
-    });
-  </script>
-  <!-- QR Code Section -->
-  <div class="wrap" style="text-align:center; margin-top:20px;">
-    <h2>📱 扫码打开问卷</h2>
-    <p style="color:#64748b;font-size:14px">将会生成当前网页网址的二维码</p>
-    <div id="qrcode" style="display:inline-block; margin:12px;"></div>
-    <button class="btn" onclick="makeQR()">生成二维码</button>
-  </div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script>
-    function makeQR(){
-      const box = document.getElementById('qrcode');
-      box.innerHTML = '';
-      const url = window.location.href;
-      new QRCode(box, {
-        text: url,
-        width: 180,
-        height: 180
-      });
-    }
-  </script>
-
+    <script src="script.js"></script>
 </body>
 </html>
