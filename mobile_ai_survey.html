@@ -185,5 +185,27 @@
       URL.revokeObjectURL(url);
     });
   </script>
+  <!-- QR Code Section -->
+  <div class="wrap" style="text-align:center; margin-top:20px;">
+    <h2>📱 扫码打开问卷</h2>
+    <p style="color:#64748b;font-size:14px">将会生成当前网页网址的二维码</p>
+    <div id="qrcode" style="display:inline-block; margin:12px;"></div>
+    <button class="btn" onclick="makeQR()">生成二维码</button>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    function makeQR(){
+      const box = document.getElementById('qrcode');
+      box.innerHTML = '';
+      const url = window.location.href;
+      new QRCode(box, {
+        text: url,
+        width: 180,
+        height: 180
+      });
+    }
+  </script>
+
 </body>
 </html>
